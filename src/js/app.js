@@ -19,6 +19,15 @@ mermaid.initialize({
         lineColor: '#f0f0f0',
         secondaryColor: '#569cd6',
         tertiaryColor: '#ce9178'
+    },
+    flowchart: {
+        curve: 'basis',
+        padding: 20
+    },
+    sequence: {
+        mirrorActors: false,
+        bottomMarginAdj: 10,
+        useMaxWidth: true
     }
 });
 
