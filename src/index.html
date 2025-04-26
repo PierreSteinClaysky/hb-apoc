@@ -9,7 +9,55 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/vs2015.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/erlang.min.js"></script>
+    <!-- Load mermaid before our app code -->
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.0/dist/mermaid.min.js"></script>
+    <script>
+        // Initialize mermaid with ASCII art theme
+        mermaid.initialize({ 
+            startOnLoad: false,
+            theme: 'dark',
+            securityLevel: 'loose',
+            themeVariables: {
+                primaryColor: '#4ec9b0',
+                primaryTextColor: '#4ec9b0',
+                primaryBorderColor: '#4ec9b0',
+                lineColor: '#4ec9b0',
+                secondaryColor: '#4ec9b0',
+                tertiaryColor: '#4ec9b0',
+                fontFamily: "'Consolas', 'Courier New', monospace",
+                fontSize: '14px',
+                darkMode: true,
+                background: '#1a1a1a',
+                mainBkg: '#1a1a1a',
+                nodeBorder: '#4ec9b0',
+                clusterBkg: '#1a1a1a',
+                clusterBorder: '#4ec9b0',
+                titleColor: '#4ec9b0'
+            },
+            flowchart: {
+                curve: 'linear',
+                nodeSpacing: 30,
+                rankSpacing: 30,
+                padding: 15,
+                useMaxWidth: true,
+                htmlLabels: true,
+                diagramPadding: 4
+            },
+            sequence: {
+                mirrorActors: false,
+                bottomMarginAdj: 5,
+                useMaxWidth: true,
+                boxMargin: 5,
+                boxTextMargin: 3,
+                noteMargin: 5,
+                messageMargin: 20,
+                messageAlign: 'center',
+                width: 150,
+                height: 40,
+                activationWidth: 10
+            }
+        });
+    </script>
     <link rel="stylesheet" href="css/mobile.css">
 </head>
 <body>
