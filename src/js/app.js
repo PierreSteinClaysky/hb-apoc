@@ -7,27 +7,52 @@ import { loadBlogPosts } from './modules/blog';
 import { initializeSidebar } from './modules/sidebar';
 import { loadVersion, loadVersions, flattenFileStructure } from './modules/docLoader';
 
-// Initialize mermaid with dark theme and error handling
+// Initialize mermaid with ASCII art theme
 mermaid.initialize({ 
-    startOnLoad: false, // We'll manually initialize
+    startOnLoad: false,
     theme: 'dark',
-    securityLevel: 'loose', // Required for some diagrams
+    securityLevel: 'loose',
     themeVariables: {
         primaryColor: '#4ec9b0',
-        primaryTextColor: '#f0f0f0',
-        primaryBorderColor: '#333',
-        lineColor: '#f0f0f0',
-        secondaryColor: '#569cd6',
-        tertiaryColor: '#ce9178'
+        primaryTextColor: '#4ec9b0', // Use terminal green for all text
+        primaryBorderColor: '#4ec9b0',
+        lineColor: '#4ec9b0',
+        secondaryColor: '#4ec9b0',
+        tertiaryColor: '#4ec9b0',
+        fontFamily: "'Consolas', 'Courier New', monospace",
+        fontSize: '14px',
+        darkMode: true,
+        background: '#1a1a1a',
+        mainBkg: '#1a1a1a',
+        nodeBorder: '#4ec9b0',
+        clusterBkg: '#1a1a1a',
+        clusterBorder: '#4ec9b0',
+        titleColor: '#4ec9b0'
     },
     flowchart: {
-        curve: 'basis',
-        padding: 20
+        curve: 'basis', // Use straight lines
+        nodeSpacing: 30,
+        rankSpacing: 30,
+        padding: 15,
+        useMaxWidth: true,
+        htmlLabels: true,
+        diagramPadding: 4,
+        defaultRenderer: 'dagre',
+        ranker: 'tight-tree'
     },
     sequence: {
         mirrorActors: false,
-        bottomMarginAdj: 10,
-        useMaxWidth: true
+        bottomMarginAdj: 5,
+        useMaxWidth: true,
+        boxMargin: 5,
+        boxTextMargin: 3,
+        noteMargin: 5,
+        messageMargin: 20,
+        messageAlign: 'center',
+        width: 150,
+        height: 40,
+        boxMargin: 5,
+        activationWidth: 10
     }
 });
 
@@ -38,8 +63,10 @@ const originalCodeRenderer = renderer.code.bind(renderer);
 // Override code block rendering
 renderer.code = function(code, language) {
     if (language === 'mermaid') {
-        return `<pre><code class="mermaid">${code}</code></pre>`;
+        // Mermaid content should be rendered as a diagram, not as code
+        return `<div class="mermaid">${code}</div>`;
     }
+    // All other code blocks get normal code treatment
     return originalCodeRenderer(code, language);
 };
 
@@ -48,6 +75,7 @@ marked.setOptions({
     gfm: true,
     renderer: renderer,
     highlight: function(code, lang) {
+        // Only highlight actual code, not mermaid diagrams
         if (lang && lang !== 'mermaid' && hljs.getLanguage(lang)) {
             return hljs.highlight(code, { language: lang }).value;
         }
@@ -82,21 +110,16 @@ function selectFile(files, path) {
         // Re-initialize mermaid diagrams with error handling
         setTimeout(() => {
             try {
-                document.querySelectorAll('code.mermaid').forEach(async (element) => {
+                document.querySelectorAll('.mermaid').forEach(async (element) => {
                     const code = element.textContent;
                     console.log('Rendering mermaid diagram:', code); // Debug log
-                    element.innerHTML = code;
-                    element.removeAttribute('data-processed');
                     
                     try {
                         await mermaid.render(`mermaid-${Math.random()}`, code, (svgCode) => {
-                            // Replace the code element with the rendered SVG
-                            const pre = element.parentElement;
-                            pre.innerHTML = svgCode;
-                            pre.className = 'mermaid'; // Add mermaid class to pre for styling
+                            element.innerHTML = svgCode;
                         });
                     } catch (mermaidError) {
-                        console.error('Failed to render mermaid diagram:', mermaidError);
+                        console.error('Failed to render diagram:', mermaidError);
                         element.innerHTML = `
                             <div class="mermaid-error">
                                 <p>Failed to render diagram</p>
@@ -201,21 +224,16 @@ async function loadVersionContent(version) {
 
                     // Re-initialize mermaid diagrams with error handling
                     try {
-                        document.querySelectorAll('code.mermaid').forEach(async (element) => {
+                        document.querySelectorAll('.mermaid').forEach(async (element) => {
                             const code = element.textContent;
                             console.log('Rendering mermaid diagram:', code); // Debug log
-                            element.innerHTML = code;
-                            element.removeAttribute('data-processed');
                             
                             try {
                                 await mermaid.render(`mermaid-${Math.random()}`, code, (svgCode) => {
-                                    // Replace the code element with the rendered SVG
-                                    const pre = element.parentElement;
-                                    pre.innerHTML = svgCode;
-                                    pre.className = 'mermaid'; // Add mermaid class to pre for styling
+                                    element.innerHTML = svgCode;
                                 });
                             } catch (mermaidError) {
-                                console.error('Failed to render mermaid diagram:', mermaidError);
+                                console.error('Failed to render diagram:', mermaidError);
                                 element.innerHTML = `
                                     <div class="mermaid-error">
                                         <p>Failed to render diagram</p>

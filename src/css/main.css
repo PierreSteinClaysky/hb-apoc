@@ -746,38 +746,90 @@ blockquote {
     border-radius: 4px;
 }
 
-/* Mermaid diagram styles */
+/* Mermaid diagram styles - ASCII-like theme */
 .mermaid {
     background: #1a1a1a;
     padding: 30px 20px;
-    border-radius: 4px;
+    border-radius: 0; /* Remove rounded corners for terminal look */
     margin: 2em 0;
-    border: 1px solid #333;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    border: 1px solid var(--terminal-green);
+    font-family: 'Consolas', 'Courier New', monospace;
     text-align: center;
     overflow-x: auto;
+    line-height: 1.2;
 }
 
 .mermaid svg {
     max-width: 100%;
     height: auto;
-    min-width: 400px; /* Ensure small diagrams don't get too compressed */
+    min-width: 400px;
 }
 
-/* Style specific diagram types */
+/* Style edges to look like ASCII lines */
 .mermaid .flowchart-link {
     stroke: var(--terminal-green) !important;
-    stroke-width: 2px !important;
+    stroke-width: 1px !important;
+    stroke-dasharray: 0 !important; /* Solid lines */
 }
 
-.mermaid .actor {
-    fill: #2d2d2d !important;
+/* Style nodes to look like ASCII boxes */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon,
+.mermaid .node path {
+    fill: transparent !important;
     stroke: var(--terminal-green) !important;
+    stroke-width: 1px !important;
+}
+
+/* Style text to look like terminal output */
+.mermaid .node .label {
+    font-family: 'Consolas', 'Courier New', monospace !important;
+    font-size: 14px !important;
+    fill: var(--terminal-green) !important;
+}
+
+.mermaid .edgeLabel {
+    font-family: 'Consolas', 'Courier New', monospace !important;
+    font-size: 14px !important;
+    color: var(--terminal-green) !important;
+    background-color: transparent !important;
+}
+
+/* Style sequence diagram specific elements */
+.mermaid .actor {
+    fill: transparent !important;
+    stroke: var(--terminal-green) !important;
+    stroke-width: 1px !important;
 }
 
 .mermaid .messageText {
-    fill: var(--text-color) !important;
+    font-family: 'Consolas', 'Courier New', monospace !important;
+    fill: var(--terminal-green) !important;
     font-size: 14px !important;
+}
+
+.mermaid .messageLine0,
+.mermaid .messageLine1 {
+    stroke: var(--terminal-green) !important;
+    stroke-width: 1px !important;
+}
+
+/* Add ASCII-like borders */
+.mermaid::before {
+    content: '+' attr(data-processed) '+';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 20px;
+    line-height: 20px;
+    color: var(--terminal-green);
+    border-bottom: 1px solid var(--terminal-green);
+    font-family: 'Consolas', 'Courier New', monospace;
+    padding: 0 10px;
+    text-align: left;
 }
 
 .mermaid-error {
