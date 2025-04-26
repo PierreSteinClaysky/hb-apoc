@@ -7,25 +7,11 @@ import { loadBlogPosts } from './modules/blog';
 import { initializeSidebar } from './modules/sidebar';
 import { loadVersion, loadVersions, flattenFileStructure } from './modules/docLoader';
 
-// Initialize marked with options and syntax highlighting
-marked.setOptions({
-    breaks: true,
-    gfm: true,
-    highlight: function(code, lang) {
-        if (lang === 'mermaid') {
-            return `<div class="mermaid">${code}</div>`;
-        }
-        if (lang && hljs.getLanguage(lang)) {
-            return hljs.highlight(code, { language: lang }).value;
-        }
-        return hljs.highlightAuto(code).value;
-    }
-});
-
-// Initialize mermaid with dark theme
+// Initialize mermaid with dark theme and error handling
 mermaid.initialize({ 
-    startOnLoad: true,
+    startOnLoad: false, // We'll manually initialize
     theme: 'dark',
+    securityLevel: 'loose', // Required for some diagrams
     themeVariables: {
         primaryColor: '#4ec9b0',
         primaryTextColor: '#f0f0f0',
@@ -33,6 +19,22 @@ mermaid.initialize({
         lineColor: '#f0f0f0',
         secondaryColor: '#569cd6',
         tertiaryColor: '#ce9178'
+    }
+});
+
+// Initialize marked with options and syntax highlighting
+marked.setOptions({
+    breaks: true,
+    gfm: true,
+    highlight: function(code, lang) {
+        if (lang === 'mermaid') {
+            // Just wrap mermaid code, we'll render it after markdown processing
+            return `<pre class="mermaid">${code}</pre>`;
+        }
+        if (lang && hljs.getLanguage(lang) && lang !== 'mermaid') {
+            return hljs.highlight(code, { language: lang }).value;
+        }
+        return hljs.highlightAuto(code).value;
     }
 });
 
@@ -60,8 +62,29 @@ function selectFile(files, path) {
             hljs.highlightBlock(block);
         });
 
-        // Re-initialize mermaid diagrams
-        mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+        // Re-initialize mermaid diagrams with error handling
+        try {
+            document.querySelectorAll('.mermaid').forEach(async (element) => {
+                // Clean up any previous rendering artifacts
+                element.innerHTML = element.textContent;
+                
+                try {
+                    await mermaid.render(`mermaid-${Math.random()}`, element.textContent, (svgCode) => {
+                        element.innerHTML = svgCode;
+                    });
+                } catch (mermaidError) {
+                    console.error('Failed to render mermaid diagram:', mermaidError);
+                    element.innerHTML = `
+                        <div class="mermaid-error">
+                            <p>Failed to render diagram</p>
+                            <pre>${element.textContent}</pre>
+                        </div>
+                    `;
+                }
+            });
+        } catch (error) {
+            console.error('Error initializing mermaid diagrams:', error);
+        }
 
         // Update URL with file path
         const params = new URLSearchParams(window.location.search);
@@ -152,8 +175,29 @@ async function loadVersionContent(version) {
                         hljs.highlightBlock(block);
                     });
 
-                    // Re-initialize mermaid diagrams
-                    mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+                    // Re-initialize mermaid diagrams with error handling
+                    try {
+                        document.querySelectorAll('.mermaid').forEach(async (element) => {
+                            // Clean up any previous rendering artifacts
+                            element.innerHTML = element.textContent;
+                            
+                            try {
+                                await mermaid.render(`mermaid-${Math.random()}`, element.textContent, (svgCode) => {
+                                    element.innerHTML = svgCode;
+                                });
+                            } catch (mermaidError) {
+                                console.error('Failed to render mermaid diagram:', mermaidError);
+                                element.innerHTML = `
+                                    <div class="mermaid-error">
+                                        <p>Failed to render diagram</p>
+                                        <pre>${element.textContent}</pre>
+                                    </div>
+                                `;
+                            }
+                        });
+                    } catch (error) {
+                        console.error('Error initializing mermaid diagrams:', error);
+                    }
                 }
             }
         }
