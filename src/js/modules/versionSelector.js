@@ -44,7 +44,7 @@ export async function initVersionSelector(onVersionSelect) {
             const meta = metadata[v] || {};
             console.log(`Version ${v} metadata:`, meta);
             const date = meta.currentWithMainAs ? 
-                ` (current with main as of ${formatDate(meta.currentWithMainAs)})` : '';
+                ` (main as of ${formatDate(meta.currentWithMainAs)})` : '';
             return `<option value="${v}"${v === 'latest' ? ' selected' : ''}>
                 ${v === 'latest' ? 'Latest' : v}${date}
             </option>`;
@@ -125,7 +125,7 @@ export async function updateVersionInfo(version, fileCount) {
         const meta = metadata[version] || {};
         console.log(`Version info ${version} metadata:`, meta);
         const date = meta.currentWithMainAs ? 
-            ` | Current with main as of ${formatDate(meta.currentWithMainAs)}` : '';
+            ` | main as of ${formatDate(meta.currentWithMainAs)}` : '';
         const status = meta.status ? ` | ${meta.status}` : '';
         
         versionInfo.textContent = `Version ${version === 'latest' ? 'Latest' : version} - ${fileCount} files${date}${status}`;
